@@ -1,0 +1,217 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+/*
+ * CHEESE"O" design system.
+ * Warm ivory / charcoal-brown / aged-butter gold. All colors in oklch.
+ */
+
+@theme inline {
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 2px);
+  --radius-2xl: calc(var(--radius) + 4px);
+  --radius-3xl: calc(var(--radius) + 8px);
+  --radius-4xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-gold: var(--gold);
+  --color-olive: var(--olive);
+  --color-terracotta: var(--terracotta);
+  --color-parchment: var(--parchment);
+  --color-ink: var(--ink);
+
+  --shadow-soft: 0 18px 50px -30px oklch(0.22 0.03 60 / 0.45);
+}
+
+:root {
+  --radius: 2px;
+  --background: oklch(0.972 0.012 85);
+  --foreground: oklch(0.235 0.021 60);
+  --ink: oklch(0.185 0.018 55);
+  --parchment: oklch(0.944 0.017 85);
+  --card: oklch(0.985 0.008 85);
+  --card-foreground: oklch(0.235 0.021 60);
+  --popover: oklch(0.985 0.008 85);
+  --popover-foreground: oklch(0.235 0.021 60);
+  --primary: oklch(0.235 0.021 60);
+  --primary-foreground: oklch(0.972 0.012 85);
+  --secondary: oklch(0.93 0.018 84);
+  --secondary-foreground: oklch(0.235 0.021 60);
+  --muted: oklch(0.938 0.014 84);
+  --muted-foreground: oklch(0.49 0.021 62);
+  --accent: oklch(0.78 0.085 82);
+  --accent-foreground: oklch(0.235 0.021 60);
+  --gold: oklch(0.74 0.093 83);
+  --olive: oklch(0.52 0.055 116);
+  --terracotta: oklch(0.585 0.105 45);
+  --destructive: oklch(0.52 0.16 27);
+  --destructive-foreground: oklch(0.98 0.005 85);
+  --border: oklch(0.88 0.016 82);
+  --input: oklch(0.88 0.016 82);
+  --ring: oklch(0.62 0.06 82);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+}
+
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 88rem;
+  padding-inline: 1.25rem;
+  @media (min-width: 768px) {
+    padding-inline: 2.5rem;
+  }
+  @media (min-width: 1280px) {
+    padding-inline: 4rem;
+  }
+}
+
+@utility label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 11vw, 10rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 6vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  line-height: 1.05;
+}
+
+@utility link-underline {
+  position: relative;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
+    background-size: 100% 1px;
+  }
+}
+
+@layer components {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  .page-enter {
+    animation: page-enter 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
