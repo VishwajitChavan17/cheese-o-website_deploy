@@ -12,4 +12,28 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    ssr: {
+      optimizeDeps: {
+        include: [
+          "@tanstack/react-start",
+          "@tanstack/start-client-core",
+          "@tanstack/start-server-core",
+        ],
+      },
+    },
+    resolve: {
+      dedupe: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-query",
+        "@tanstack/query-core",
+        "@tanstack/react-start",
+        "@tanstack/start-client-core",
+        "@tanstack/start-server-core",
+      ],
+    },
+  },
 });

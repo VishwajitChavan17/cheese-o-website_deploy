@@ -1,4 +1,4 @@
-import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
+import { createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
 
@@ -17,39 +17,66 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// Start installs this automatically when src/start.ts is absent; defining the
-// file opts out, so re-add it explicitly to keep server functions protected
-// from cross-site requests.
-const csrfMiddleware =
-  typeof createCsrfMiddleware === "function"
-    ? createCsrfMiddleware({
-        filter: (ctx) => ctx.handlerType === "serverFn",
-      })
-    : createMiddleware().server(async (ctx: any) => {
-        if (ctx.handlerType === "serverFn") {
-          const fetchSite = ctx.request.headers.get("Sec-Fetch-Site");
-          if (
-            fetchSite !== null &&
-            fetchSite !== "same-origin" &&
-            fetchSite !== "same-site" &&
-            fetchSite !== "none"
-          ) {
-            return new Response("CSRF Validation Failed", { status: 403 });
-          }
-          const origin = ctx.request.headers.get("Origin");
-          if (origin !== null) {
-            try {
-              const reqOrigin = new URL(ctx.request.url).origin;
-              if (origin !== reqOrigin) {
-                return new Response("CSRF Validation Failed", { status: 403 });
-              }
-            } catch {
-              // ignore URL parsing errors
-            }
-          }
+// CSRF Protection Middleware for Server Functions
+// Protects server functions from cross-site request forgery by validating
+// same-origin request headers (Sec-Fetch-Site, Origin, and Referer).
+const csrfMiddleware = createMiddleware().server(async (ctx: any) => {
+  if (ctx.handlerType === "serverFn") {
+    const request = ctx.request;
+
+    // 1. Sec-Fetch-Site validation
+    const fetchSite = request.headers.get("Sec-Fetch-Site");
+    if (fetchSite !== null) {
+      if (
+        fetchSite !== "same-origin" &&
+        fetchSite !== "same-site" &&
+        fetchSite !== "none"
+      ) {
+        return new Response("CSRF Validation Failed", { status: 403 });
+      }
+      return ctx.next();
+    }
+
+    // 2. Origin validation
+    const origin = request.headers.get("Origin");
+    if (origin !== null) {
+      try {
+        const reqOrigin = new URL(request.url).origin;
+        if (origin !== reqOrigin) {
+          return new Response("CSRF Validation Failed", { status: 403 });
         }
-        return ctx.next();
-      });
+      } catch {
+        return new Response("CSRF Validation Failed", { status: 403 });
+      }
+      return ctx.next();
+    }
+
+    // 3. Referer validation
+    const referer = request.headers.get("Referer");
+    if (referer !== null) {
+      try {
+        const refererOrigin = new URL(referer).origin;
+        const reqOrigin = new URL(request.url).origin;
+        if (refererOrigin !== reqOrigin) {
+          return new Response("CSRF Validation Failed", { status: 403 });
+        }
+      } catch {
+        return new Response("CSRF Validation Failed", { status: 403 });
+      }
+      return ctx.next();
+    }
+
+    // Allow safe read-only methods (GET/HEAD)
+    if (request.method === "GET" || request.method === "HEAD") {
+      return ctx.next();
+    }
+
+    // Unverified cross-origin mutation request
+    return new Response("CSRF Validation Failed", { status: 403 });
+  }
+
+  return ctx.next();
+});
 
 export const startInstance = createStart(() => ({
   requestMiddleware: [errorMiddleware, csrfMiddleware],
