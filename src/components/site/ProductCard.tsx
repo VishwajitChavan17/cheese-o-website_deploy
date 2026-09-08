@@ -9,6 +9,8 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
   const soldOut = product.variants.every((v) => v.stock === "sold_out");
   const low = !soldOut && product.variants.some((v) => v.stock === "low_stock");
   const defaultVariant = product.variants[0];
+  if (!defaultVariant) return null;
+
   const inCart = lines.some(
     (l) => l.productId === product.id && l.weight === defaultVariant.weight,
   );

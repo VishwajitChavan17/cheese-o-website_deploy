@@ -33,7 +33,7 @@ export function createCsrfMiddleware(opts: CsrfMiddlewareOptions = {}) {
     return getFailureResponse(opts, ctx);
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env["NODE_ENV"] !== "production") {
     Object.defineProperty(middleware, csrfSymbol, { value: true });
   }
 

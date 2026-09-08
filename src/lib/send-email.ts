@@ -13,12 +13,12 @@ export const sendContactEmail = createServerFn({ method: "POST" })
   .validator((data: ContactEmailPayload) => data)
   .handler(async ({ data }) => {
     const { name, email, order, message, subjectPrefix = "Contact Form Inquiry" } = data;
-    const targetEmail = process.env.TARGET_EMAIL || "vishwajitchavan123@gmail.com";
+    const targetEmail = process.env["TARGET_EMAIL"] || "vishwajitchavan123@gmail.com";
 
-    const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
-    const smtpPort = Number(process.env.SMTP_PORT) || 465;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
+    const smtpHost = process.env["SMTP_HOST"] || "smtp.gmail.com";
+    const smtpPort = Number(process.env["SMTP_PORT"]) || 465;
+    const smtpUser = process.env["SMTP_USER"];
+    const smtpPass = process.env["SMTP_PASS"];
 
     const emailSubject = `Cheese"O" — ${subjectPrefix} from ${name}`;
     const emailHtml = `
